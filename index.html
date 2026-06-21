@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nikkil Prithvin RR — CCE Student · Drone Builder · Embedded Engineer</title>
+  <meta name="description" content="CCE Computer & Communication student, competitive drone builder, and aspiring embedded systems engineer working with Arduino, ESP32, STM32, Raspberry Pi and more." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ══════════════════════════════════════════════════════
+       DESIGN TOKENS
+       ══════════════════════════════════════════════════════ */
+    :root {
+      --bg-void:     #080c10;
+      --bg-panel:    #0d1117;
+      --bg-raised:   #161b22;
+      --border:      #1e2a38;
+
+      --green:       #00ff9d;
+      --cyan:        #00c8ff;
+      --amber:       #ffb300;
+      --red-warn:    #ff3d3d;
+
+      --text-primary: #e6edf3;
+      --text-muted:   #7d8fa3;
+      --text-dim:     #3d4f61;
+
+      --font-mono:   'Space Mono', 'Courier New', monospace;
+      --font-body:   'Inter', system-ui, sans-serif;
+
+      --radius-sm:   4px;
+      --radius-md:   8px;
+
+      --glow-green:  0 0 8px rgba(0,255,157,0.55), 0 0 24px rgba(0,255,157,0.25);
+      --glow-cyan:   0 0 8px rgba(0,200,255,0.55), 0 0 24px rgba(0,200,255,0.25);
+      --glow-amber:  0 0 8px rgba(255,179,0,0.55),  0 0 24px rgba(255,179,0,0.25);
+
+      --nav-h:       64px;
+      --section-gap: 110px;
+    }
+
+    /* ══════════════════════════════════════════════════════
+       RESET & BASE
+       ══════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      background: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    /* dot-grid overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+    section, nav, footer { position: relative; z-index: 1; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    ul, ol { list-style: none; }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+    /* ══════════════════════════════════════════════════════
+       TYPOGRAPHY
+       ══════════════════════════════════════════════════════ */
+    .label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    h1, h2, h3 { font-family: var(--font-mono); font-weight: 700; line-height: 1.15; }
+
+    /* ══════════════════════════════════════════════════════
+       BUTTONS
+       ══════════════════════════════════════════════════════ */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1.5px solid transparent;
+      white-space: nowrap;
+    }
+    .btn svg { flex-shrink: 0; }
+
+    .btn-primary {
+      border-color: var(--green); color: var(--green);
+      box-shadow: var(--glow-green);
+    }
+    .btn-primary:hover {
+      background: var(--green); color: var(--bg-void);
+      box-shadow: 0 0 20px rgba(0,255,157,0.7), 0 0 40px rgba(0,255,157,0.35);
+    }
+    .btn-secondary {
+      border-color: var(--cyan); color: var(--cyan);
+    }
+    .btn-secondary:hover {
+      background: rgba(0,200,255,0.1);
+      box-shadow: var(--glow-cyan);
+    }
+    .btn-ghost {
+      border-color: var(--border); color: var(--text-muted);
+    }
+    .btn-ghost:hover {
+      border-color: var(--cyan); color: var(--cyan);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       NAV
+       ══════════════════════════════════════════════════════ */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      background: rgba(8,12,16,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+    }
+    .nav-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      height: 100%;
+    }
+    /* NP logo — your initials in terminal style */
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 1rem; font-weight: 700;
+      color: var(--green);
+      letter-spacing: -0.01em;
+    }
+    .nav-logo .dim { color: var(--text-muted); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 26px;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.73rem; color: var(--text-muted);
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--green);
+      transform: scaleX(0); transition: transform 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    #nav-toggle {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    #nav-toggle span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text-primary); border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    #mobile-menu {
+      display: none; position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.97);
+      border-bottom: 1px solid var(--border);
+      z-index: 999; padding: 20px 24px;
+      flex-direction: column; gap: 16px;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a {
+      font-family: var(--font-mono); font-size: 0.85rem;
+      color: var(--text-muted); padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    #mobile-menu a:last-child { border: none; }
+
+    /* ══════════════════════════════════════════════════════
+       HERO
+       ══════════════════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: var(--nav-h);
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center;
+      width: 100%;
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.68rem;
+      color: var(--amber);
+      border: 1px solid rgba(255,179,0,0.3);
+      background: rgba(255,179,0,0.06);
+      padding: 5px 12px; border-radius: 99px;
+      margin-bottom: 24px;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--amber);
+      animation: pulse-amber 2s ease-in-out infinite;
+    }
+    @keyframes pulse-amber {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,179,0,0.6); }
+      50%       { box-shadow: 0 0 0 6px rgba(255,179,0,0); }
+    }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 32px; height: 1.5px;
+      background: var(--green); box-shadow: var(--glow-green);
+    }
+
+    .hero-name {
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      color: var(--text-primary); margin-bottom: 6px;
+    }
+    .hero-name .accent { color: var(--green); }
+    /* Full name below — smaller subtitle style */
+    .hero-fullname {
+      font-family: var(--font-mono);
+      font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      margin-bottom: 16px;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-mono);
+      font-size: clamp(0.88rem, 1.5vw, 1.05rem);
+      color: var(--text-muted);
+      margin-bottom: 12px; min-height: 1.6em;
+    }
+    #typed-cursor {
+      display: inline-block; width: 2px; height: 1em;
+      background: var(--green); margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .hero-sub {
+      color: var(--text-muted); font-size: 0.92rem;
+      max-width: 440px; margin-bottom: 34px; line-height: 1.78;
+    }
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    /* ── Circuit SVG ── */
+    .hero-visual { display: flex; justify-content: center; align-items: center; }
+    .circuit-wrap { position: relative; width: min(440px, 100%); aspect-ratio: 1/1; }
+    .circuit-svg { width: 100%; height: 100%; overflow: visible; }
+
+    .trace { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .trace-green {
+      stroke: var(--green); stroke-width: 1.5; opacity: 0.7;
+      stroke-dasharray: 600; stroke-dashoffset: 600;
+      animation: draw-trace 3s ease forwards;
+    }
+    .trace-cyan {
+      stroke: var(--cyan); stroke-width: 1; opacity: 0.55;
+      stroke-dasharray: 400; stroke-dashoffset: 400;
+      animation: draw-trace 3.4s 0.4s ease forwards;
+    }
+    .trace-amber {
+      stroke: var(--amber); stroke-width: 0.8; opacity: 0.45;
+      stroke-dasharray: 300; stroke-dashoffset: 300;
+      animation: draw-trace 2.8s 0.8s ease forwards;
+    }
+    @keyframes draw-trace { to { stroke-dashoffset: 0; } }
+
+    .node { animation: node-appear 0.4s ease forwards; opacity: 0; }
+    @keyframes node-appear { to { opacity: 1; } }
+    .node-pulse { animation: npulse 2.5s ease-in-out infinite; }
+    @keyframes npulse {
+      0%, 100% { r: 4; opacity: 0.7; }
+      50%       { r: 6.5; opacity: 1; }
+    }
+    .chip-glow { filter: drop-shadow(0 0 10px rgba(0,255,157,0.5)); }
+
+    /* ══════════════════════════════════════════════════════
+       SHARED SECTION STYLES
+       ══════════════════════════════════════════════════════ */
+    .section { padding: var(--section-gap) 0; }
+    .section-header { margin-bottom: 52px; }
+    .section-title {
+      font-size: clamp(1.4rem, 2.8vw, 2rem);
+      color: var(--text-primary); margin-top: 10px;
+      display: inline-block;
+    }
+    .section-title::after {
+      content: ''; display: block; margin-top: 8px;
+      width: 48px; height: 2px;
+      background: var(--green); box-shadow: var(--glow-green);
+    }
+
+    .reveal {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ══════════════════════════════════════════════════════
+       SPECIALTIES
+       ══════════════════════════════════════════════════════ */
+    #specialties { background: var(--bg-panel); }
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .spec-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 26px 22px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .spec-card::before {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: var(--card-accent, var(--green));
+      box-shadow: 0 0 12px var(--card-accent, var(--green));
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .spec-card:hover { border-color: var(--card-accent, var(--green)); transform: translateY(-4px); }
+    .spec-card:hover::before { opacity: 1; }
+    .spec-card[data-accent="green"] { --card-accent: var(--green); }
+    .spec-card[data-accent="cyan"]  { --card-accent: var(--cyan);  }
+    .spec-card[data-accent="amber"] { --card-accent: var(--amber); }
+    .spec-card[data-accent="red"]   { --card-accent: var(--red-warn); }
+
+    .spec-icon {
+      width: 42px; height: 42px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--card-accent, var(--green));
+      color: var(--card-accent, var(--green));
+    }
+    .spec-card h3 { font-size: 0.9rem; margin-bottom: 9px; }
+    .spec-card p  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; }
+
+    .spec-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .tag {
+      font-family: var(--font-mono); font-size: 0.63rem;
+      padding: 3px 8px; border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.05);
+      color: var(--card-accent, var(--green));
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ══════════════════════════════════════════════════════
+       PROJECTS
+       ══════════════════════════════════════════════════════ */
+    #projects { background: var(--bg-void); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 22px;
+    }
+    .proj-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+      display: flex; flex-direction: column;
+    }
+    .proj-card:hover {
+      border-color: var(--cyan); transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,200,255,0.08);
+    }
+    .proj-thumb {
+      height: 170px; background: var(--bg-raised);
+      position: relative; overflow: hidden;
+    }
+    .proj-thumb-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      background: repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,0.015) 12px,rgba(255,255,255,0.015) 24px);
+    }
+    .proj-thumb-placeholder .thumb-icon { font-size: 2rem; opacity: 0.3; }
+    .proj-thumb-placeholder span { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; }
+    .proj-badge {
+      position: absolute; top: 10px; right: 10px;
+      font-family: var(--font-mono); font-size: 0.58rem;
+      padding: 3px 8px; border-radius: 99px; letter-spacing: 0.08em;
+    }
+    .badge-wip  { background: rgba(255,179,0,0.15); color: var(--amber);   border: 1px solid rgba(255,179,0,0.3); }
+    .badge-done { background: rgba(0,255,157,0.12); color: var(--green);   border: 1px solid rgba(0,255,157,0.3); }
+    .badge-open { background: rgba(0,200,255,0.12); color: var(--cyan);    border: 1px solid rgba(0,200,255,0.3); }
+
+    .proj-body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+    .proj-body h3 { font-size: 0.9rem; margin-bottom: 7px; }
+    .proj-body p  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; flex: 1; margin-bottom: 14px; }
+    .proj-stack { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+    .proj-stack .tag { color: var(--cyan); }
+    .proj-links { display: flex; gap: 8px; }
+
+    /* ══════════════════════════════════════════════════════
+       ABOUT  (with photo)
+       ══════════════════════════════════════════════════════ */
+    #about { background: var(--bg-panel); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1.5fr;
+      gap: 48px; align-items: start;
+    }
+
+    /* ── Photo card ── */
+    .about-photo-col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+
+    .photo-frame {
+      width: 148px; height: 188px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--green);
+      box-shadow: var(--glow-green), inset 0 0 20px rgba(0,255,157,0.04);
+      overflow: hidden;
+      position: relative;
+      background: var(--bg-raised);
+      flex-shrink: 0;
+    }
+    /* Scan-line overlay for the cyber aesthetic */
+    .photo-frame::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,157,0.03) 2px,
+        rgba(0,255,157,0.03) 4px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+    .photo-frame img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block;
+    }
+    /* Placeholder shown when no photo loaded */
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 8px;
+      color: var(--text-dim);
+    }
+    .photo-placeholder svg { opacity: 0.4; }
+    .photo-placeholder span {
+      font-family: var(--font-mono); font-size: 0.58rem;
+      letter-spacing: 0.08em; text-align: center;
+      color: var(--text-dim);
+    }
+
+    /* Corner bracket decoration */
+    .photo-corner {
+      position: absolute; width: 16px; height: 16px;
+      border-color: var(--cyan); border-style: solid;
+      z-index: 3;
+    }
+    .pc-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .pc-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .pc-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .pc-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .photo-label {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      color: var(--green); letter-spacing: 0.1em;
+      text-transform: uppercase; text-align: center;
+    }
+
+    /* ── Bio column ── */
+    .about-bio h3 {
+      font-size: 1rem; margin-bottom: 12px; color: var(--text-primary);
+    }
+    .about-bio p {
+      font-size: 0.84rem; color: var(--text-muted);
+      line-height: 1.8; margin-bottom: 12px;
+    }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px;
+    }
+    .stat-box {
+      background: var(--bg-void); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 14px;
+    }
+    .stat-box .num {
+      font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700;
+      color: var(--green); display: block;
+    }
+    .stat-box .desc { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* ── Timeline column ── */
+    .timeline { position: relative; padding-left: 26px; }
+    .timeline::before {
+      content: ''; position: absolute;
+      left: 0; top: 8px; bottom: 8px; width: 1px;
+      background: linear-gradient(to bottom, var(--green), var(--cyan), transparent);
+    }
+    .tl-item { position: relative; margin-bottom: 32px; }
+    .tl-item:last-child { margin-bottom: 0; }
+    .tl-dot {
+      position: absolute; left: -31px; top: 6px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--bg-panel);
+      border: 2px solid var(--green);
+      box-shadow: var(--glow-green);
+    }
+    .tl-item[data-dim] .tl-dot { border-color: var(--text-dim); box-shadow: none; }
+    .tl-date {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      color: var(--green); letter-spacing: 0.1em; margin-bottom: 4px;
+    }
+    .tl-item[data-dim] .tl-date { color: var(--text-dim); }
+    .tl-title { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; font-family: var(--font-body); }
+    .tl-sub { font-size: 0.78rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ══════════════════════════════════════════════════════
+       SKILLS
+       ══════════════════════════════════════════════════════ */
+    #skills { background: var(--bg-void); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 36px;
+    }
+    .skill-group h4 {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-muted); letter-spacing: 0.1em;
+      text-transform: uppercase; margin-bottom: 18px;
+      padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .skill-row { margin-bottom: 13px; }
+    .skill-row-head {
+      display: flex; justify-content: space-between; margin-bottom: 5px;
+    }
+    .skill-row-head span:first-child { font-size: 0.8rem; color: var(--text-primary); }
+    .skill-pct { font-family: var(--font-mono); font-size: 0.67rem; color: var(--text-muted); }
+    .skill-bar { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .skill-fill {
+      height: 100%; border-radius: 99px; width: 0;
+      transition: width 1s cubic-bezier(.25,.8,.25,1);
+    }
+    .fill-green { background: var(--green); box-shadow: var(--glow-green); }
+    .fill-cyan  { background: var(--cyan);  box-shadow: var(--glow-cyan);  }
+    .fill-amber { background: var(--amber); box-shadow: var(--glow-amber); }
+
+    /* Chip badges grid — for tools/platforms */
+    .chip-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
+    }
+    .chip {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      padding: 5px 11px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      background: var(--bg-raised);
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .chip:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,200,255,0.06); }
+    .chip.c-green { border-color: rgba(0,255,157,0.3); color: var(--green); }
+    .chip.c-cyan  { border-color: rgba(0,200,255,0.3); color: var(--cyan);  }
+    .chip.c-amber { border-color: rgba(255,179,0,0.3);  color: var(--amber); }
+
+    /* ══════════════════════════════════════════════════════
+       CONTACT
+       ══════════════════════════════════════════════════════ */
+    #contact { background: var(--bg-panel); padding: var(--section-gap) 0 80px; }
+    .contact-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 56px; align-items: start;
+    }
+    .contact-blurb h2 { font-size: clamp(1.3rem, 2.4vw, 1.8rem); }
+    .contact-blurb p  { font-size: 0.86rem; color: var(--text-muted); line-height: 1.78; margin: 14px 0 26px; }
+
+    .social-links { display: flex; gap: 10px; flex-wrap: wrap; }
+    .social-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 15px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono); font-size: 0.72rem;
+      color: var(--text-muted); transition: all 0.2s;
+    }
+    .social-link:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,200,255,0.06); }
+
+    .contact-form { display: flex; flex-direction: column; gap: 13px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+    .form-input, .form-textarea {
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 9px 13px;
+      color: var(--text-primary); font-family: var(--font-body);
+      font-size: 0.83rem; transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none; width: 100%;
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-dim); }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,255,157,0.1);
+    }
+    .form-textarea { resize: vertical; min-height: 105px; }
+
+    /* ══════════════════════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════════════════════ */
+    footer {
+      background: var(--bg-void); border-top: 1px solid var(--border); padding: 22px 0;
+    }
+    .footer-inner {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-dim); }
+    .footer-copy a { color: var(--green); }
+    .footer-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* ══════════════════════════════════════════════════════
+       SCROLL-TO-TOP
+       ══════════════════════════════════════════════════════ */
+    #scroll-top {
+      position: fixed; bottom: 24px; right: 24px;
+      width: 38px; height: 38px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-muted);
+      font-size: 0.95rem; z-index: 900;
+      opacity: 0; pointer-events: none;
+      transition: all 0.25s;
+    }
+    #scroll-top.show { opacity: 1; pointer-events: auto; }
+    #scroll-top:hover { border-color: var(--green); color: var(--green); box-shadow: var(--glow-green); }
+
+    /* ══════════════════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      :root { --section-gap: 80px; }
+      .hero-grid   { grid-template-columns: 1fr; gap: 36px; }
+      .hero-visual { order: -1; }
+      .circuit-wrap { width: min(300px, 80vw); }
+      .about-grid  { grid-template-columns: 1fr; }
+      .about-photo-col { flex-direction: row; align-items: flex-start; gap: 20px; }
+      .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 640px) {
+      .nav-links  { display: none; }
+      #nav-toggle { display: flex; }
+      .form-row   { grid-template-columns: 1fr; }
+      .about-stats { grid-template-columns: 1fr 1fr; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+      .about-photo-col { flex-direction: column; align-items: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     NAV
+     ══════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Main">
+  <div class="container nav-inner">
+
+    <!-- NP = Nikkil Prithvin — terminal bracket style -->
+    <a href="#hero" class="nav-logo" aria-label="Home">
+      <span class="dim">&lt;</span>NP<span class="dim">/&gt;</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#specialties">Focus</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a href="./assets/resume.pdf"
+         download="Nikkil_Prithvin_RR_Resume.pdf"
+         class="btn btn-primary"
+         aria-label="Download Resume">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Resume
+      </a>
+      <button id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<div id="mobile-menu" role="menu" aria-label="Mobile navigation">
+  <a href="#specialties" role="menuitem">Focus</a>
+  <a href="#projects"    role="menuitem">Projects</a>
+  <a href="#about"       role="menuitem">About</a>
+  <a href="#skills"      role="menuitem">Skills</a>
+  <a href="#contact"     role="menuitem">Contact</a>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════════════ -->
+<section id="hero" aria-label="Introduction">
+  <div class="container hero-grid">
+
+    <div class="hero-copy">
+      <div class="status-badge">
+        <span class="status-dot" aria-hidden="true"></span>
+        Currently Learning · Embedded Systems Engineering
+      </div>
+
+      <h1 class="hero-name">
+        Hi, I'm<br><span class="accent">Nikkil Prithvin.</span>
+      </h1>
+
+      <p class="hero-tagline">
+        <span id="typed-text"></span><span id="typed-cursor" aria-hidden="true"></span>
+      </p>
+
+      <p class="hero-sub">
+        CCE student with a hands-on obsession for hardware — I build drones from scratch,
+        program microcontrollers at the bare-metal level, and am now channelling all of that
+        into becoming an embedded systems engineer. Hardware isn't a hobby; it's a calling.
+      </p>
+
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          View Projects
+        </a>
+        <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+      </div>
+    </div>
+
+    <!-- Animated circuit SVG -->
+    <div class="hero-visual" aria-hidden="true">
+      <div class="circuit-wrap">
+        <svg class="circuit-svg" viewBox="0 0 460 460" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="230" cy="230" r="200" fill="none" stroke="#1e2a38" stroke-width="1" stroke-dasharray="6 10"/>
+
+          <path class="trace trace-green"
+            d="M 230 50 L 340 50 L 340 120 L 410 120 L 410 230
+               L 340 230 L 340 340 L 230 340 L 230 410
+               L 120 410 L 120 340 L 50 340 L 50 230
+               L 120 230 L 120 120 L 230 120 Z"/>
+          <path class="trace trace-cyan"
+            d="M 230 120 L 230 170 M 230 290 L 230 340
+               M 120 230 L 170 230 M 290 230 L 340 230
+               M 340 120 L 340 170 M 340 290 L 340 340"/>
+          <path class="trace trace-amber"
+            d="M 170 170 L 200 170 L 200 200
+               M 260 170 L 290 170 L 290 200
+               M 170 290 L 200 290 L 200 260
+               M 260 290 L 290 290 L 290 260"/>
+          <path class="trace trace-green"
+            style="stroke-dasharray:120;stroke-dashoffset:120;animation-delay:1.8s"
+            d="M 170 200 L 170 260 M 290 200 L 290 260
+               M 200 170 L 260 170 M 200 290 L 260 290"/>
+
+          <!-- Central MCU chip -->
+          <g class="chip-glow" style="animation-delay:2s">
+            <rect x="185" y="185" width="90" height="90" rx="4"
+                  fill="#0d1117" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="185" y1="205" x2="175" y2="205" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="185" y1="220" x2="175" y2="220" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="185" y1="235" x2="175" y2="235" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="185" y1="250" x2="175" y2="250" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="275" y1="205" x2="285" y2="205" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="275" y1="220" x2="285" y2="220" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="275" y1="235" x2="285" y2="235" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="275" y1="250" x2="285" y2="250" stroke="#00ff9d" stroke-width="1.5"/>
+            <line x1="205" y1="185" x2="205" y2="175" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="220" y1="185" x2="220" y2="175" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="235" y1="185" x2="235" y2="175" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="250" y1="185" x2="250" y2="175" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="205" y1="275" x2="205" y2="285" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="220" y1="275" x2="220" y2="285" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="235" y1="275" x2="235" y2="285" stroke="#00c8ff" stroke-width="1.5"/>
+            <line x1="250" y1="275" x2="250" y2="285" stroke="#00c8ff" stroke-width="1.5"/>
+            <text x="230" y="226" text-anchor="middle" font-family="Space Mono,monospace" font-size="9" fill="#00ff9d" opacity="0.95">MCU</text>
+            <text x="230" y="241" text-anchor="middle" font-family="Space Mono,monospace" font-size="7" fill="#7d8fa3">ESP32</text>
+            <text x="230" y="254" text-anchor="middle" font-family="Space Mono,monospace" font-size="6.5" fill="#3d4f61">STM32</text>
+          </g>
+
+          <!-- Nodes -->
+          <circle class="node" cx="340" cy="50"  r="4" fill="#00ff9d" style="animation-delay:0.8s"/>
+          <circle class="node" cx="410" cy="120" r="4" fill="#00ff9d" style="animation-delay:0.9s"/>
+          <circle class="node" cx="410" cy="230" r="4" fill="#00c8ff" style="animation-delay:1s"/>
+          <circle class="node" cx="340" cy="340" r="4" fill="#00ff9d" style="animation-delay:1.1s"/>
+          <circle class="node" cx="230" cy="410" r="4" fill="#00ff9d" style="animation-delay:1.2s"/>
+          <circle class="node" cx="120" cy="340" r="4" fill="#00c8ff" style="animation-delay:1.3s"/>
+          <circle class="node" cx="50"  cy="230" r="4" fill="#00c8ff" style="animation-delay:1.4s"/>
+          <circle class="node" cx="120" cy="120" r="4" fill="#00ff9d" style="animation-delay:1.5s"/>
+          <circle class="node" cx="230" cy="50"  r="4" fill="#00c8ff" style="animation-delay:1.6s"/>
+          <circle class="node" cx="170" cy="170" r="3.5" fill="#ffb300" style="animation-delay:2.2s"/>
+          <circle class="node" cx="290" cy="170" r="3.5" fill="#ffb300" style="animation-delay:2.3s"/>
+          <circle class="node" cx="170" cy="290" r="3.5" fill="#ffb300" style="animation-delay:2.4s"/>
+          <circle class="node" cx="290" cy="290" r="3.5" fill="#ffb300" style="animation-delay:2.5s"/>
+          <circle class="node-pulse" cx="410" cy="230" r="4" fill="none" stroke="#00c8ff" stroke-width="1" opacity="0.5"/>
+          <circle class="node-pulse" cx="50"  cy="230" r="4" fill="none" stroke="#00c8ff" stroke-width="1" opacity="0.5" style="animation-delay:1.2s"/>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SPECIALTIES
+     ══════════════════════════════════════════════════════ -->
+<section id="specialties" class="section" aria-label="Core Focus Areas">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">What I'm Into</span>
+      <h2 class="section-title">Core Focus Areas</h2>
+    </div>
+
+    <div class="spec-grid">
+
+      <div class="spec-card reveal" data-accent="green">
+        <div class="spec-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 7V5M12 7V5M15 7V5M9 17v2M12 17v2M15 17v2M7 9H5M7 12H5M7 15H5M17 9h2M17 12h2M17 15h2"/></svg>
+        </div>
+        <h3>Embedded Systems &amp; Microcontrollers</h3>
+        <p>Bare-metal firmware, peripheral drivers, and hardware bring-up across a wide range of MCU families — from classic LPC architectures to modern ESP and STM32 platforms.</p>
+        <div class="spec-tags">
+          <span class="tag">C / C++</span>
+          <span class="tag">Arduino</span>
+          <span class="tag">ESP32/ESP8266</span>
+          <span class="tag">STM32</span>
+          <span class="tag">LPC2148</span>
+        </div>
+      </div>
+
+      <div class="spec-card reveal" data-accent="cyan">
+        <div class="spec-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2a4 4 0 0 1 4 4M12 2a4 4 0 0 0-4 4M12 22a4 4 0 0 0 4-4M12 22a4 4 0 0 1-4-4M2 12a4 4 0 0 0 4 4M2 12a4 4 0 0 1 4-4M22 12a4 4 0 0 1-4 4M22 12a4 4 0 0 0-4-4"/></svg>
+        </div>
+        <h3>Drone Building</h3>
+        <p>Full-stack drone construction — airframe assembly, motor &amp; ESC selection, flight controller tuning, and custom electronics integration. Currently building and flying as part of my project.</p>
+        <div class="spec-tags">
+          <span class="tag">Betaflight</span>
+          <span class="tag">ArduPilot</span>
+          <span class="tag">ESC/Motor Tuning</span>
+          <span class="tag">FPV Systems</span>
+        </div>
+      </div>
+
+      <div class="spec-card reveal" data-accent="amber">
+        <div class="spec-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h3>Linux, Python &amp; Scripting</h3>
+        <p>Comfortable on the command line — automating tasks with Bash and Shell scripts, writing Python tools for data processing and hardware interfacing, and using the Raspberry Pi as a Linux SBC platform.</p>
+        <div class="spec-tags">
+          <span class="tag">Python</span>
+          <span class="tag">Bash</span>
+          <span class="tag">Shell Scripting</span>
+          <span class="tag">Raspberry Pi</span>
+          <span class="tag">Linux</span>
+        </div>
+      </div>
+
+      <div class="spec-card reveal" data-accent="red">
+        <div class="spec-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>OSINT &amp; Cyber Curiosity</h3>
+        <p>Exploring open-source intelligence techniques, network fundamentals, and how the digital world connects back to the physical hardware I build. An early-stage interest that's growing fast.</p>
+        <div class="spec-tags">
+          <span class="tag">OSINT</span>
+          <span class="tag">Network Basics</span>
+          <span class="tag">Reconnaissance</span>
+          <span class="tag">Cyber-Physical</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     PROJECTS
+     ══════════════════════════════════════════════════════ -->
+<section id="projects" class="section" aria-label="Projects">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Built &amp; Building</span>
+      <h2 class="section-title">Projects</h2>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- Project 1 -->
+      <article class="proj-card reveal">
+        <div class="proj-thumb">
+          <div class="proj-thumb-placeholder">
+            <span><img src="./bg/turmeric-arial-1.jpg"/></span>
+          </div>
+          <span class="proj-badge badge-done">Completed</span>
+        </div>
+        <div class="proj-body">
+          <h3>Smart Agriculture Watering System</h3>
+            <p>Developed Smart Agriculture Watering System using Nodemcu-esp8266, relay, submersible water pump, jumping wires, electric solenoid value, overhead tank, drip irrigation kit, etc. State Level Award winner in INSPIRE MANAK Award 2021, conducted for students of class 6-10 of age group 10 - 15 years , where 1 million ideas were scouted by the Department of Science & Technology with the National Innovation Fund (NIF). I was selected out of those 1 lakh students and was awarded with ₹10,000 prize amount, to develop prototype exhibitions for National Level Selection. (INSPIRE - INnovation in Science Pursuit for Inspired REsearch, MANAK - Million Minds Augmenting National Aspirations and Knowledge).</p>  
+          <div class="proj-stack">
+            <span class="tag">ESP32/ESP8266</span>
+            <span class="tag">Acutators</span>
+            <span class="tag">Sensors</span>
+            <span class="tag">IoT</span>
+            <span class="tag">C++</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 2 -->
+      <article class="proj-card reveal">
+        <div class="proj-thumb">
+          <div class="proj-thumb-placeholder">
+            <span><img src="./bg/g8ud4yocwbeb1.png"/></span>
+          </div>
+          <span class="proj-badge badge-done">Completed</span>
+        </div>
+        <div class="proj-body">
+          <h3>AI-Powered Threat Intelligence Dashboard</h3>
+          <p>Developed a web-based Threat Intelligence Platform integrating GPT-4 to analyze and summarize cybersecurity threat data from multiple sources, including security blogs and news sites. The platform leverages web scraping and Natural Language Processing (NLP) to provide actionable insights, enabling to proactively defend against emerging threats. Implemented using Python, Flask, Beautiful Soup, and Open AI API.</p>
+          <div class="proj-stack">
+            <span class="tag">Python</span>
+            <span class="tag">NLP</span>
+            <span class="tag">GPT-4</span>
+            <span class="tag">Claude AI</span>
+          </div>
+        </div>
+      </article>
+
+      
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     ABOUT + TIMELINE  (with photo)
+     ══════════════════════════════════════════════════════ -->
+<section id="about" class="section" aria-label="About and Journey">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">The Human Behind the Hardware</span>
+      <h2 class="section-title">About Me</h2>
+    </div>
+
+    <div class="about-grid">
+
+      <!-- ── Column 1: Passport photo ── -->
+      <div class="about-photo-col reveal">
+        <div class="photo-frame">
+          <!--
+            ★ TO ADD YOUR PHOTO:
+               1. Drop your passport photo into the assets/ folder
+               2. Rename it to  photo.jpg  (or photo.png)
+               3. Uncomment the <img> line below and delete the placeholder div
+          -->
+          <img src="./assets/photo.jpg" alt="Nikkil Prithvin RR" />
+
+          <!-- Cyan corner brackets — purely decorative -->
+          <div class="photo-corner pc-tl" aria-hidden="true"></div>
+          <div class="photo-corner pc-tr" aria-hidden="true"></div>
+          <div class="photo-corner pc-bl" aria-hidden="true"></div>
+          <div class="photo-corner pc-br" aria-hidden="true"></div>
+        </div>
+        <p class="photo-label">Nikkil Prithvin RR</p>
+      </div>
+
+      <!-- ── Column 2: Bio + stats ── -->
+      <div class="reveal">
+        <div class="about-bio">
+          <h3>CCE student. Drone builder. Embedded engineer in the making.</h3>
+          <p>
+            I'm pursuing Computer &amp; Communication Engineering with a parallel obsession for
+            physical hardware. While most people in my course stay in software, I'm the one
+            soldering ESCs, flashing firmware at 3am, and reading STM32 reference manuals for fun.
+          </p>
+          <p>
+            Right now I'm on a focused mission to become an embedded systems engineer — systematically
+            working through bare-metal C, RTOS concepts, and communication protocols like I²C, SPI,
+            and UART across multiple microcontroller families.
+          </p>
+        </div>
+
+        <div class="about-stats">
+          <div class="stat-box">
+            <span class="num">8+</span>
+            <span class="desc">MCU platforms used</span>
+          </div>
+          <div class="stat-box">
+            <span class="num">3+</span>
+            <span class="desc">Drones built</span>
+          </div>
+          <div class="stat-box">
+            <span class="num">15+</span>
+            <span class="desc">ESP32/ESP8266 projects made</span>
+          </div>
+          <div class="stat-box">
+            <span class="num">30+</span>
+            <span class="desc">Ardunio projects made</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Column 3: Timeline ── -->
+      <div class="reveal">
+        <ol class="timeline">
+
+          <li class="tl-item">
+            <div class="tl-dot"></div>
+            <div class="tl-date">2026 — Present</div>
+            <div class="tl-title">Learning Embedded Systems Engineering</div>
+            <p class="tl-sub">Systematic study of bare-metal C, peripheral drivers, FreeRTOS, and hardware protocols (I²C, SPI, UART, CAN). Working across STM32, ESP32, and LPC2148 platforms.</p>
+          </li>
+
+          <li class="tl-item" data-dim>
+            <div class="tl-dot"></div>
+            <div class="tl-date">2025</div>
+            <div class="tl-title">Started CCE — Computer &amp; Communication Engineering at Amrita Vishwa Vidyapeetham, Coimbatore</div>
+            <p class="tl-sub">Began the degree. Got introduced to digital electronics, communication systems, and programming. Discovered microcontrollers at age 8 and never looked back.</p>
+          </li>
+
+          <li class="tl-item" data-dim>
+            <div class="tl-dot"></div>
+            <div class="tl-date">2020</div>
+            <div class="tl-title">State-Level Winner</div>
+            <p class="tl-sub">INSPIRE Awards - MANAK (DST, Govt. of India) | Awarded ₹10,000 cash prize for school-level product innovation.</p>
+          </li>
+
+          <li class="tl-item" data-dim>
+            <div class="tl-dot"></div>
+            <div class="tl-date">2019</div>
+            <div class="tl-title">First Microcontroller Projects</div>
+            <p class="tl-sub">Started with STEM Kits,Arduino, quickly moved to ESP8266/ESP32. Built sensor nodes, motor controllers, and IR-based robots. First taste of real embedded development.</p>
+          </li>
+
+        </ol>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     SKILLS
+     ══════════════════════════════════════════════════════ -->
+<section id="skills" class="section" aria-label="Technical Skills">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Toolbox</span>
+      <h2 class="section-title">Technical Skills</h2>
+    </div>
+
+    <div class="skills-grid">
+
+      <!-- Programming languages — bar chart -->
+      <div class="skill-group reveal">
+        <h4>Languages</h4>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>C / C++</span><span class="skill-pct">85%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Python</span><span class="skill-pct">78%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="78"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Bash / Shell Scripting</span><span class="skill-pct">70%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Assembly Language</span><span class="skill-pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="70"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Embedded C</span><span class="skill-pct">60%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="70"></div></div>
+        </div>
+      </div>
+
+      <!-- Microcontroller platforms — bar chart -->
+      <div class="skill-group reveal">
+        <h4>Microcontroller Platforms</h4>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Arduino (AVR / ARM)</span><span class="skill-pct">95%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>ESP32 / ESP8266</span><span class="skill-pct">95%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="82"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Raspberry Pi</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="76"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>STM32</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="60"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>LPC2148 / LPC2138</span><span class="skill-pct">85%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>IoT and Arduino Cloud</span><span class="skill-pct">87%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Adafruit IO</span><span class="skill-pct">82%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>MIT APP Inventor</span><span class="skill-pct">86%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
+        </div>
+      </div>
+
+      <!-- Tools & other — chip badges -->
+      <div class="skill-group reveal">
+        <h4>Tools &amp; Other Skills</h4>
+        <div class="chip-grid">
+          <span class="chip c-green">Arduino IDE</span>
+          <span class="chip c-green">Keil uVision 4</span>
+          <span class="chip c-green">Proteus Design Suite</span>
+          <span class="chip c-green">PlatformIO</span>
+          <span class="chip c-cyan">QGC(Q Ground Controll)</span>
+          <span class="chip c-cyan">ArduPilot</span>
+          <span class="chip c-green">Mission Planner</span>
+          <span class="chip c-cyan">Linux / CLI</span>
+          <span class="chip c-amber">OSINT</span>
+          <span class="chip c-amber">Recon-ng</span>
+          <span class="chip">Git / GitHub</span>
+          <span class="chip">I²C / SPI / UART</span>
+          <span class="chip">PWM / GPIO</span>
+          <span class="chip">Soldering</span>
+          <span class="chip">PCB Reading</span>
+          <span class="chip">Logic Analyser</span>
+          <span class="chip">Oscilloscope</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     CONTACT
+     ══════════════════════════════════════════════════════ -->
+<section id="contact" aria-label="Contact">
+  <div class="container contact-inner">
+
+    <div class="contact-blurb reveal">
+      <span class="label">Say Hello</span>
+      <h2 class="section-title" style="margin-top:10px;">Let's Connect.</h2>
+      <p>
+        Whether you want to talk embedded systems, collaborate on a drone project,
+        or just geek out about microcontrollers — I'm always up for it.
+        Also open to internship opportunities in embedded / IoT engineering.
+      </p>
+
+      <!-- ★ Replace with your real social links -->
+      <div class="social-links">
+        <a href="https://github.com/nikkil08" target="_blank" rel="noopener" class="social-link" aria-label="GitHub profile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a href="https://www.linkedin.com/in/nikkil-prithvin-rr-261702392" target="_blank" rel="noopener" class="social-link" aria-label="LinkedIn profile">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="mailto:nikkilprithvin@gmail.com" class="social-link" aria-label="Send email">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          Email Me
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════════════ -->
+<footer role="contentinfo">
+  <div class="container footer-inner">
+    <p class="footer-copy">
+      &copy; <span id="year"></span>
+      <a target="_blank" rel="noopener">Built by Nikkil Prithvin RR</a>
+    </p>
+    <div class="footer-actions">
+      <a href="https://github.com/nikkil08" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:0.68rem;padding:6px 12px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.083-.73.083-.73 1.205.085 1.84 1.237 1.84 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.4 3-.405 1.02.005 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="./assets/resume.pdf"
+         download="Nikkil_Prithvin_RR_Resume.pdf"
+         class="btn btn-primary"
+         aria-label="Download Resume PDF">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Resume
+      </a>
+    </div>
+  </div>
+</footer>
+
+<button id="scroll-top" aria-label="Scroll to top">↑</button>
+
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+     ══════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ── Year ── */
+document.getElementById('year').textContent = new Date().getFullYear();
+
+/* ── Typing effect ── */
+(function () {
+  const lines = [
+    'CCE Student & Drone Builder',
+    'Learning Embedded Systems',
+    'Arduino · ESP32 · STM32',
+    'Raspberry Pi · LPC2148',
+    'Python · Bash · Shell',
+    'Aspiring Embedded Engineer',
+  ];
+  const el = document.getElementById('typed-text');
+  let li = 0, ci = 0, dir = 1, pause = 0;
+  function tick() {
+    if (pause > 0) { pause--; setTimeout(tick, 80); return; }
+    const line = lines[li];
+    if (dir === 1) {
+      ci++;
+      el.textContent = line.slice(0, ci);
+      if (ci === line.length) { dir = -1; pause = 26; }
+    } else {
+      ci--;
+      el.textContent = line.slice(0, ci);
+      if (ci === 0) { dir = 1; li = (li + 1) % lines.length; pause = 6; }
+    }
+    setTimeout(tick, dir === 1 ? 60 : 36);
+  }
+  tick();
+})();
+
+/* ── Mobile menu ── */
+(function () {
+  const toggle = document.getElementById('nav-toggle');
+  const menu   = document.getElementById('mobile-menu');
+  toggle.addEventListener('click', function () {
+    const open = menu.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+  });
+  menu.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+})();
+
+/* ── Scroll reveals ── */
+(function () {
+  const items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(function (el) { el.classList.add('visible'); });
+    return;
+  }
+  const obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  items.forEach(function (el) { obs.observe(el); });
+})();
+
+/* ── Skill bars ── */
+(function () {
+  const fills = document.querySelectorAll('.skill-fill');
+  if (!('IntersectionObserver' in window)) {
+    fills.forEach(function (el) { el.style.width = el.dataset.pct + '%'; });
+    return;
+  }
+  const obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.style.width = e.target.dataset.pct + '%'; obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.4 });
+  fills.forEach(function (el) { obs.observe(el); });
+})();
+
+/* ── Scroll to top ── */
+(function () {
+  const btn = document.getElementById('scroll-top');
+  window.addEventListener('scroll', function () {
+    btn.classList.toggle('show', window.scrollY > 400);
+  }, { passive: true });
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+/* ── Contact form (Formspree) ── */
+(function () {
+  const form   = document.getElementById('contact-form');
+  const submit = document.getElementById('form-submit');
+  const status = document.getElementById('form-status');
+  if (!form) return;
+  if (form.action.includes('YOUR_FORMSPREE_ID')) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      status.style.display = 'block';
+      status.style.color   = 'var(--amber)';
+      status.textContent   = '⚠  Add your Formspree ID to the form action to enable submissions.';
+    });
+    return;
+  }
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    submit.disabled    = true;
+    submit.textContent = 'Sending…';
+    status.style.display = 'none';
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST', body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        status.style.color = 'var(--green)';
+        status.textContent = '✓ Message sent — I\'ll get back to you soon.';
+        form.reset();
+      } else { throw new Error(); }
+    } catch (_) {
+      status.style.color = 'var(--red-warn)';
+      status.textContent = '✗ Something went wrong. Email me directly instead.';
+    }
+    status.style.display = 'block';
+    submit.disabled    = false;
+    submit.textContent = 'Send Message';
+  });
+})();
+
+/* ── Stagger grid children ── */
+(function () {
+  document.querySelectorAll('.spec-grid, .projects-grid, .skills-grid').forEach(function (grid) {
+    Array.from(grid.children).forEach(function (child, i) {
+      child.style.transitionDelay = (i * 75) + 'ms';
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
