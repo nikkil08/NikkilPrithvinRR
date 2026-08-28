@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nikkil Prithvin RR — CCE Student · Drone Builder · Embedded Engineer</title>
+  <title>Nikkil Prithvin RR — CCE Student · Drone Engineer · Embedded Engineer</title>
   <meta name="description" content="CCE Computer & Communication student, competitive drone builder, and aspiring embedded systems engineer working with Arduino, ESP32, STM32, Raspberry Pi and more." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -34,6 +34,7 @@
 
       --radius-sm:   4px;
       --radius-md:   8px;
+      --radius-lg:   16px;
 
       --glow-green:  0 0 8px rgba(0,255,157,0.55), 0 0 24px rgba(0,255,157,0.25);
       --glow-cyan:   0 0 8px rgba(0,200,255,0.55), 0 0 24px rgba(0,200,255,0.25);
@@ -41,36 +42,49 @@
 
       --nav-h:       64px;
       --section-gap: 110px;
+
+      /* Internship colors */
+      --intern-active:  #00ff9d;
+      --intern-upcoming: #ffb300;
+      --intern-past:    #7d8fa3;
     }
 
-    /* ══════════════════════════════════════════════════════
-       RESET & BASE
-       ══════════════════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; }
-    body {
-      background: var(--bg-void);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    /* dot-grid overlay */
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
-    }
-    section, nav, footer { position: relative; z-index: 1; }
-    a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    ul, ol { list-style: none; }
+/* ══════════════════════════════════════════════════════
+   RESET & BASE
+   ══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
 
-    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+/* particle network background */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.35;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+section, nav, footer { position: relative; z-index: 1; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+ul, ol { list-style: none; }
+
+.container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
 
     /* ══════════════════════════════════════════════════════
        TYPOGRAPHY
@@ -84,44 +98,63 @@
     }
     h1, h2, h3 { font-family: var(--font-mono); font-weight: 700; line-height: 1.15; }
 
-    /* ══════════════════════════════════════════════════════
-       BUTTONS
-       ══════════════════════════════════════════════════════ */
-    .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 22px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1.5px solid transparent;
-      white-space: nowrap;
-    }
-    .btn svg { flex-shrink: 0; }
+/* ══════════════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+}
+.btn svg { flex-shrink: 0; }
 
-    .btn-primary {
-      border-color: var(--green); color: var(--green);
-      box-shadow: var(--glow-green);
-    }
-    .btn-primary:hover {
-      background: var(--green); color: var(--bg-void);
-      box-shadow: 0 0 20px rgba(0,255,157,0.7), 0 0 40px rgba(0,255,157,0.35);
-    }
-    .btn-secondary {
-      border-color: var(--cyan); color: var(--cyan);
-    }
-    .btn-secondary:hover {
-      background: rgba(0,200,255,0.1);
-      box-shadow: var(--glow-cyan);
-    }
-    .btn-ghost {
-      border-color: var(--border); color: var(--text-muted);
-    }
-    .btn-ghost:hover {
-      border-color: var(--cyan); color: var(--cyan);
-    }
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+.btn:hover::before {
+  opacity: 0.12;
+  transform: translateX(0);
+}
+
+.btn-primary {
+  border-color: var(--green); color: var(--green);
+  box-shadow: var(--glow-green);
+}
+.btn-primary:hover {
+  background: var(--green); color: var(--bg-void);
+  box-shadow: 0 0 20px rgba(0,255,157,0.7), 0 0 40px rgba(0,255,157,0.35);
+}
+.btn-primary:hover::before { background: var(--bg-void); }
+
+.btn-secondary {
+  border-color: var(--cyan); color: var(--cyan);
+}
+.btn-secondary:hover {
+  background: rgba(0,200,255,0.1);
+  box-shadow: var(--glow-cyan);
+}
+
+.btn-ghost {
+  border-color: var(--border); color: var(--text-muted);
+}
+.btn-ghost:hover {
+  border-color: var(--cyan); color: var(--cyan);
+}
 
     /* ══════════════════════════════════════════════════════
        NAV
@@ -194,84 +227,123 @@
     }
     #mobile-menu a:last-child { border: none; }
 
-    /* ══════════════════════════════════════════════════════
-       HERO
-       ══════════════════════════════════════════════════════ */
-    #hero {
-      min-height: 100vh;
-      display: flex; align-items: center;
-      padding-top: var(--nav-h);
-      overflow: hidden;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px; align-items: center;
-      width: 100%;
-    }
+/* ══════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding-top: var(--nav-h);
+  overflow: hidden;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  width: 100%;
+}
 
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-family: var(--font-mono); font-size: 0.68rem;
-      color: var(--amber);
-      border: 1px solid rgba(255,179,0,0.3);
-      background: rgba(255,179,0,0.06);
-      padding: 5px 12px; border-radius: 99px;
-      margin-bottom: 24px;
-    }
-    .status-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--amber);
-      animation: pulse-amber 2s ease-in-out infinite;
-    }
-    @keyframes pulse-amber {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255,179,0,0.6); }
-      50%       { box-shadow: 0 0 0 6px rgba(255,179,0,0); }
-    }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  color: var(--amber);
+  border: 1px solid rgba(255,179,0,0.3);
+  background: rgba(255,179,0,0.06);
+  padding: 5px 12px; border-radius: 99px;
+  margin-bottom: 24px;
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--amber);
+  animation: pulse-amber 2s ease-in-out infinite;
+}
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,179,0,0.6); }
+  50%       { box-shadow: 0 0 0 6px rgba(255,179,0,0); }
+}
 
-    .hero-eyebrow {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 18px;
-    }
-    .hero-eyebrow::before {
-      content: ''; display: block;
-      width: 32px; height: 1.5px;
-      background: var(--green); box-shadow: var(--glow-green);
-    }
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px;
+}
+.hero-eyebrow::before {
+  content: ''; display: block;
+  width: 32px; height: 1.5px;
+  background: var(--green); box-shadow: var(--glow-green);
+}
 
-    .hero-name {
-      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
-      color: var(--text-primary); margin-bottom: 6px;
-    }
-    .hero-name .accent { color: var(--green); }
-    /* Full name below — smaller subtitle style */
-    .hero-fullname {
-      font-family: var(--font-mono);
-      font-size: clamp(0.75rem, 1.2vw, 0.9rem);
-      color: var(--text-muted);
-      letter-spacing: 0.12em;
-      margin-bottom: 16px;
-    }
+/* glitch effect on accent text */
+.hero-name {
+  font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  color: var(--text-primary); margin-bottom: 6px;
+  position: relative;
+}
+.hero-name .accent {
+  color: var(--green);
+  position: relative;
+}
+.hero-name .accent::before,
+.hero-name .accent::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%);
+  opacity: 0.8;
+}
+.hero-name .accent::before {
+  color: var(--cyan);
+  animation: glitch-top 2.5s infinite linear alternate-reverse;
+}
+.hero-name .accent::after {
+  color: var(--amber);
+  clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
+  animation: glitch-bottom 2.5s infinite linear alternate-reverse;
+}
+@keyframes glitch-top {
+  0%, 90%, 100% { transform: translate(0); }
+  92% { transform: translate(-2px, -1px); }
+  94% { transform: translate(2px, 1px); }
+  96% { transform: translate(-1px, -2px); }
+  98% { transform: translate(1px, 2px); }
+}
+@keyframes glitch-bottom {
+  0%, 90%, 100% { transform: translate(0); }
+  92% { transform: translate(2px, 1px); }
+  94% { transform: translate(-2px, -1px); }
+  96% { transform: translate(1px, 2px); }
+  98% { transform: translate(-1px, -2px); }
+}
 
-    .hero-tagline {
-      font-family: var(--font-mono);
-      font-size: clamp(0.88rem, 1.5vw, 1.05rem);
-      color: var(--text-muted);
-      margin-bottom: 12px; min-height: 1.6em;
-    }
-    #typed-cursor {
-      display: inline-block; width: 2px; height: 1em;
-      background: var(--green); margin-left: 2px;
-      vertical-align: text-bottom;
-      animation: blink 0.9s step-end infinite;
-    }
-    @keyframes blink { 50% { opacity: 0; } }
+/* Full name below — smaller subtitle style */
+.hero-fullname {
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  margin-bottom: 16px;
+}
 
-    .hero-sub {
-      color: var(--text-muted); font-size: 0.92rem;
-      max-width: 440px; margin-bottom: 34px; line-height: 1.78;
-    }
-    .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.hero-tagline {
+  font-family: var(--font-mono);
+  font-size: clamp(0.88rem, 1.5vw, 1.05rem);
+  color: var(--text-muted);
+  margin-bottom: 12px; min-height: 1.6em;
+}
+#typed-cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: var(--green); margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: blink 0.9s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.hero-sub {
+  color: var(--text-muted); font-size: 0.92rem;
+  max-width: 440px; margin-bottom: 34px; line-height: 1.78;
+}
+.hero-cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
     /* ── Circuit SVG ── */
     .hero-visual { display: flex; justify-content: center; align-items: center; }
@@ -378,54 +450,62 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
-    /* ══════════════════════════════════════════════════════
-       PROJECTS
-       ══════════════════════════════════════════════════════ */
-    #projects { background: var(--bg-void); }
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 22px;
-    }
-    .proj-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      transition: border-color 0.25s, transform 0.25s;
-      display: flex; flex-direction: column;
-    }
-    .proj-card:hover {
-      border-color: var(--cyan); transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(0,200,255,0.08);
-    }
-    .proj-thumb {
-      height: 170px; background: var(--bg-raised);
-      position: relative; overflow: hidden;
-    }
-    .proj-thumb-placeholder {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 8px;
-      background: repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,0.015) 12px,rgba(255,255,255,0.015) 24px);
-    }
-    .proj-thumb-placeholder .thumb-icon { font-size: 2rem; opacity: 0.3; }
-    .proj-thumb-placeholder span { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; }
-    .proj-badge {
-      position: absolute; top: 10px; right: 10px;
-      font-family: var(--font-mono); font-size: 0.58rem;
-      padding: 3px 8px; border-radius: 99px; letter-spacing: 0.08em;
-    }
-    .badge-wip  { background: rgba(255,179,0,0.15); color: var(--amber);   border: 1px solid rgba(255,179,0,0.3); }
-    .badge-done { background: rgba(0,255,157,0.12); color: var(--green);   border: 1px solid rgba(0,255,157,0.3); }
-    .badge-open { background: rgba(0,200,255,0.12); color: var(--cyan);    border: 1px solid rgba(0,200,255,0.3); }
+/* ══════════════════════════════════════════════════════
+   PROJECTS
+   ══════════════════════════════════════════════════════ */
+#projects { background: var(--bg-void); }
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+.proj-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+  display: flex; flex-direction: column;
+}
+.proj-card:hover {
+  border-color: var(--cyan); transform: translateY(-6px);
+  box-shadow: 0 16px 48px rgba(0,200,255,0.12);
+}
+.proj-thumb {
+  height: 170px; background: var(--bg-raised);
+  position: relative; overflow: hidden;
+}
+.proj-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.proj-card:hover .proj-thumb img {
+  transform: scale(1.05);
+}
+.proj-thumb-placeholder {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+  background: repeating-linear-gradient(45deg,transparent,transparent 12px,rgba(255,255,255,0.015) 12px,rgba(255,255,255,0.015) 24px);
+}
+.proj-thumb-placeholder .thumb-icon { font-size: 2rem; opacity: 0.3; }
+.proj-thumb-placeholder span { font-family: var(--font-mono); font-size: 0.6rem; color: var(--text-dim); letter-spacing: 0.1em; }
+.proj-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-family: var(--font-mono); font-size: 0.58rem;
+  padding: 3px 8px; border-radius: 99px; letter-spacing: 0.08em;
+}
+.badge-wip  { background: rgba(255,179,0,0.15); color: var(--amber);   border: 1px solid rgba(255,179,0,0.3); }
+.badge-done { background: rgba(0,255,157,0.12); color: var(--green);   border: 1px solid rgba(0,255,157,0.3); }
+.badge-open { background: rgba(0,200,255,0.12); color: var(--cyan);    border: 1px solid rgba(0,200,255,0.3); }
 
-    .proj-body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
-    .proj-body h3 { font-size: 0.9rem; margin-bottom: 7px; }
-    .proj-body p  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; flex: 1; margin-bottom: 14px; }
-    .proj-stack { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
-    .proj-stack .tag { color: var(--cyan); }
-    .proj-links { display: flex; gap: 8px; }
+.proj-body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+.proj-body h3 { font-size: 0.9rem; margin-bottom: 7px; }
+.proj-body p  { font-size: 0.8rem; color: var(--text-muted); line-height: 1.65; flex: 1; margin-bottom: 14px; }
+.proj-stack { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+.proj-stack .tag { color: var(--cyan); }
+.proj-links { display: flex; gap: 8px; }
 
     /* ══════════════════════════════════════════════════════
        ABOUT  (with photo)
@@ -545,6 +625,106 @@
     .tl-item[data-dim] .tl-date { color: var(--text-dim); }
     .tl-title { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; font-family: var(--font-body); }
     .tl-sub { font-size: 0.78rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ══════════════════════════════════════════════════════
+       INTERNSHIPS
+       ══════════════════════════════════════════════════════ */
+    #internships { background: var(--bg-panel); }
+    .intern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .intern-card {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      position: relative;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .intern-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: var(--intern-color, var(--green));
+      box-shadow: 0 0 12px var(--intern-color, var(--green));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .intern-card:hover {
+      border-color: var(--intern-color, var(--green));
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+    }
+    .intern-card:hover::before { opacity: 1; }
+
+    /* Status-based colors */
+    .intern-card[data-status="active"]   { --intern-color: var(--intern-active); }
+    .intern-card[data-status="upcoming"] { --intern-color: var(--intern-upcoming); }
+    .intern-card[data-status="past"]     { --intern-color: var(--intern-past); }
+
+    .intern-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .intern-meta { display: flex; flex-direction: column; gap: 4px; }
+    .intern-badge {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 99px;
+      display: inline-block;
+      width: fit-content;
+    }
+    .badge-active    { background: rgba(0,255,157,0.15); color: var(--intern-active);   border: 1px solid rgba(0,255,157,0.3); }
+    .badge-upcoming  { background: rgba(255,179,0,0.15);  color: var(--intern-upcoming); border: 1px solid rgba(255,179,0,0.3); }
+    .badge-past      { background: rgba(125,143,163,0.15); color: var(--intern-past);    border: 1px solid rgba(125,143,163,0.3); }
+    .intern-period {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+    .intern-status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .intern-card[data-status="active"]   .intern-status-dot { background: var(--intern-active);   box-shadow: 0 0 8px var(--intern-active), 0 0 16px var(--intern-active); animation: pulse-dot 2s ease-in-out infinite; }
+    .intern-card[data-status="upcoming"] .intern-status-dot { background: var(--intern-upcoming); box-shadow: 0 0 8px var(--intern-upcoming); animation: pulse-dot 2s ease-in-out infinite; }
+    .intern-card[data-status="past"]     .intern-status-dot { background: var(--intern-past);     opacity: 0.5; }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.2); }
+    }
+
+    .intern-role { font-size: 0.95rem; margin-bottom: 4px; color: var(--text-primary); }
+    .intern-company { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+    .intern-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 14px; }
+    .intern-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .intern-links { display: flex; gap: 8px; }
+    .intern-edit-note {
+      margin-top: 32px;
+      padding: 16px;
+      background: rgba(255,179,0,0.08);
+      border: 1px solid rgba(255,179,0,0.2);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--amber);
+      line-height: 1.6;
+    }
+    .intern-edit-note code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.85em;
+    }
 
     /* ══════════════════════════════════════════════════════
        SKILLS
@@ -695,6 +875,9 @@
 </head>
 <body>
 
+<!-- Particle canvas background -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
 <!-- ══════════════════════════════════════════════════════
      NAV
      ══════════════════════════════════════════════════════ -->
@@ -709,6 +892,7 @@
     <ul class="nav-links" role="list">
       <li><a href="#specialties">Focus</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#internships">Internships</a></li>
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -733,6 +917,7 @@
 <div id="mobile-menu" role="menu" aria-label="Mobile navigation">
   <a href="#specialties" role="menuitem">Focus</a>
   <a href="#projects"    role="menuitem">Projects</a>
+  <a href="#internships" role="menuitem">Internships</a>
   <a href="#about"       role="menuitem">About</a>
   <a href="#skills"      role="menuitem">Skills</a>
   <a href="#contact"     role="menuitem">Contact</a>
@@ -754,6 +939,8 @@
       <h1 class="hero-name">
         Hi, I'm<br><span class="accent">Nikkil Prithvin.</span>
       </h1>
+
+      <p class="hero-fullname">Nikkil Prithvin RR</p>
 
       <p class="hero-tagline">
         <span id="typed-text"></span><span id="typed-cursor" aria-hidden="true"></span>
@@ -938,9 +1125,7 @@
       <!-- Project 1 -->
       <article class="proj-card reveal">
         <div class="proj-thumb">
-          <div class="proj-thumb-placeholder">
-            <img src="./bg/turmeric-arial-1.jpg" alt="Smart Agriculture Watering System" style="width:100%;height:100%;object-fit:cover;"/>
-          </div>
+          <img src="./bg/turmeric-arial-1.jpg" alt="Smart Agriculture Watering System" loading="lazy" />
           <span class="proj-badge badge-done">Completed</span>
         </div>
         <div class="proj-body">
@@ -959,9 +1144,7 @@
       <!-- Project 2 -->
       <article class="proj-card reveal">
         <div class="proj-thumb">
-          <div class="proj-thumb-placeholder">
-           <span><img src="./bg/g8ud4yocwbeb1.png"/></span>
-          </div>
+          <img src="./bg/g8ud4yocwbeb1.png" alt="AI-Powered Threat Intelligence Dashboard" loading="lazy" />
           <span class="proj-badge badge-done">Completed</span>
         </div>
         <div class="proj-body">
@@ -979,20 +1162,19 @@
       <!-- Project 3 -->
       <article class="proj-card reveal">
         <div class="proj-thumb">
-          <div class="proj-thumb-placeholder">
-           <span><img src="./bg/drone.jpg"/></span>
-          </div>
+          <img src="./bg/scale-justice-dramatic-lighting_23-2151998163.avif" alt="AI-Powered Legal Management Systems" loading="lazy" />
           <span class="proj-badge badge-wip">In Progress</span>
         </div>
         <div class="proj-body">
-          <h3>Long Range Custom Drone</h3>
-          <p>I am currently developing an experimental micro-category drone specifically focused on pushing the boundaries of flight endurance and signal range, with the ultimate goal of evolving it into a fully autonomous surveillance UAV. Utilizing a Pixhawk flight controller to leverage robust GPS automation features, this phase of testing explores the integration of high-energy-density Lithium-Ion (Li-Ion) battery packs and low-KV propulsion setups to maximize battery life, alongside low-frequency 900MHz telemetry links to extend operational range. By refining these core capabilities through active experimentation, the project aims to establish a reliable long-range hardware foundation capable of eventually supporting high-definition camera payloads, automated grid patrols, and persistent aerial monitoring missions.</p>
-            <div class="proj-stack">
-            <span class="tag">Drone Building</span>
-            <span class="tag">Mission Planner</span>
-            <span class="tag">Q Ground Controll</span>
-            <span class="tag">Embedded C</span>
-            <span class="tag">Electronics Engineering</span>
+          <h3>AI-Powered Legal Management Systems for Advocates</h3>
+          <p>Developed a web-based Legal Case Intelligence & Practice Management System designed to digitize paper-based court records and streamline daily operations for RJ Law Affiliate. The platform features an instant multi-parameter query engine that enables advocates and office clerks to search and retrieve comprehensive case histories, accused profiles, and hearing logs by case number, client name, FIR, or offense type. Built using Python, Flask, SQLite, and HTML5/CSS3, the system incorporates a secure digital document repository, an automated court calendar with 1-day and 3-day reminder notifications, integrated client fee tracking, and Role-Based Access Control (RBAC) to ensure multi-tiered data confidentiality.</p>
+          <div class="proj-stack">
+            <span class="tag">Python</span>
+            <span class="tag">HTML5 / CSS3</span>
+            <span class="tag">Search Engine</span>
+            <span class="tag">RBAC</span>
+            <span class="tag">Firebase</span>
+            <span class="tag">Web Crawler</span>
           </div>
         </div>
       </article>
@@ -1040,7 +1222,7 @@
       <!-- ── Column 2: Bio + stats ── -->
       <div class="reveal">
         <div class="about-bio">
-          <h3>CCE student. Drone builder. Embedded engineer in the making.</h3>
+          <h3>CCE student. Drone engineer. Embedded engineer in the making.</h3>
           <p>
             I'm pursuing Computer &amp; Communication Engineering with a parallel obsession for
             physical hardware. While most people in my course stay in software, I'm the one
@@ -1086,6 +1268,13 @@
 
           <li class="tl-item" data-dim>
             <div class="tl-dot"></div>
+            <div class="tl-date">June 1 2026 - June 27 2026</div>
+            <div class="tl-title">Production Intern — Fuselage Innovations</div>
+            <p class="tl-sub">Assembled and integrated specialized agricultural and custom UAVs. Performed diagnostics, hardware maintenance, component calibration, and system repairs across client drone fleets.</p>
+          </li>
+
+          <li class="tl-item" data-dim>
+            <div class="tl-dot"></div>
             <div class="tl-date">2025</div>
             <div class="tl-title">Started CCE — Computer &amp; Communication Engineering at Amrita Vishwa Vidyapeetham, Coimbatore</div>
             <p class="tl-sub">Began the degree. Got introduced to digital electronics, communication systems, and programming. Discovered microcontrollers at age 8 and never looked back.</p>
@@ -1109,6 +1298,48 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     INTERNSHIPS
+     ══════════════════════════════════════════════════════ -->
+<section id="internships" class="section" aria-label="Internship Experience">
+  <div class="container">
+    <div class="section-header reveal">
+      <span class="label">Work Experience</span>
+      <h2 class="section-title">Internships</h2>
+    </div>
+
+    <div class="intern-grid">
+      <!-- INTERNSHIP 1 - CURRENT/ACTIVE -->
+      <!-- INTERNSHIP 2 - UPCOMING -->
+      
+      <!-- INTERNSHIP 3 - PAST -->
+      <article class="intern-card reveal" data-status="past">
+        <div class="intern-header">
+          <div class="intern-meta">
+            <span class="intern-badge badge-past">Completed</span>
+            <time class="intern-period" datetime="2026-06-01/2026-06-27">June 1, 2026 — June 27, 2026</time>
+          </div>
+          <div class="intern-status-dot" aria-hidden="true"></div>
+        </div>
+        <h3 class="intern-role">Production Intern</h3>
+        <p class="intern-company">Fuselage Innovations Private Limited</p>
+        <p class="intern-desc">Served as a Production Intern specializing in the end-to-end assembly, integration, and servicing of unmanned aerial vehicles (UAVs). Built custom drones tailored for varied industry applications, including agricultural operations, while delivering technical maintenance and diagnostic repairs for client-owned systems.</p>
+        <div class="intern-stack">
+          <span class="chip c-cyan">Drone Engineering</span>
+          <span class="chip c-cyan">ArduPilot</span>
+          <span class="chip c-green">K++ FC</span>
+          <span class="chip c-amber">Soldering</span>
+        </div>
+        <div class="intern-links">
+          <a href="./assets/Certificate.pdf" class="btn btn-ghost btn-sm" target="_blank" rel="noopener noreferrer" aria-label="View Internship Certificate (opens in new tab)">View Certificate</a>
+        </div>
+      </article>
+    </div>
+
   </div>
 </section>
 
@@ -1142,11 +1373,11 @@
         </div>
         <div class="skill-row">
           <div class="skill-row-head"><span>Assembly Language</span><span class="skill-pct">60%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="60"></div></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="70"></div></div>
         </div>
         <div class="skill-row">
           <div class="skill-row-head"><span>Embedded C</span><span class="skill-pct">60%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="60"></div></div>
+          <div class="skill-bar"><div class="skill-fill fill-green" data-pct="70"></div></div>
         </div>
       </div>
 
@@ -1155,35 +1386,35 @@
         <h4>Microcontroller Platforms</h4>
         <div class="skill-row">
           <div class="skill-row-head"><span>Arduino (AVR / ARM)</span><span class="skill-pct">95%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="95"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-row-head"><span>ESP32 / ESP8266</span><span class="skill-pct">95%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="95"></div></div>
-        </div>
-        <div class="skill-row">
-          <div class="skill-row-head"><span>Raspberry Pi</span><span class="skill-pct">90%</span></div>
           <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="90"></div></div>
         </div>
         <div class="skill-row">
-          <div class="skill-row-head"><span>STM32</span><span class="skill-pct">70%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="70"></div></div>
+          <div class="skill-row-head"><span>ESP32 / ESP8266</span><span class="skill-pct">95%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="82"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>Raspberry Pi</span><span class="skill-pct">90%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="76"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="skill-row-head"><span>STM32</span><span class="skill-pct">80%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="60"></div></div>
         </div>
         <div class="skill-row">
           <div class="skill-row-head"><span>LPC2148 / LPC2138</span><span class="skill-pct">85%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="85"></div></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
         </div>
         <div class="skill-row">
           <div class="skill-row-head"><span>IoT and Arduino Cloud</span><span class="skill-pct">87%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="87"></div></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
         </div>
         <div class="skill-row">
-          <div class="skill-row-head"><span>Adafruit IO</span><span class="skill-pct">65%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="65"></div></div>
+          <div class="skill-row-head"><span>Adafruit IO</span><span class="skill-pct">82%</span></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
         </div>
         <div class="skill-row">
           <div class="skill-row-head"><span>MIT APP Inventor</span><span class="skill-pct">86%</span></div>
-          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="86"></div></div>
+          <div class="skill-bar"><div class="skill-fill fill-cyan" data-pct="55"></div></div>
         </div>
       </div>
 
@@ -1416,10 +1647,91 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 /* ── Stagger grid children ── */
 (function () {
-  document.querySelectorAll('.spec-grid, .projects-grid, .skills-grid').forEach(function (grid) {
+  document.querySelectorAll('.spec-grid, .projects-grid, .skills-grid, .intern-grid').forEach(function (grid) {
     Array.from(grid.children).forEach(function (child, i) {
       child.style.transitionDelay = (i * 75) + 'ms';
     });
+  });
+})();
+
+/* ── Particle network background ── */
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [], animationId;
+  const particleCount = Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 15000));
+  const maxDist = 140;
+  const colors = ['rgba(0,255,157,0.6)', 'rgba(0,200,255,0.4)', 'rgba(255,179,0,0.4)'];
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * w;
+      this.y = Math.random() * h;
+      this.vx = (Math.random() - 0.5) * 0.4;
+      this.vy = (Math.random() - 0.5) * 0.4;
+      this.radius = Math.random() * 1.5 + 0.5;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+  }
+
+  function init() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+  }
+
+  function drawLines() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < maxDist) {
+          const opacity = (1 - dist / maxDist) * 0.15;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0,255,157,${opacity})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => { p.update(); p.draw(); });
+    drawLines();
+    animationId = requestAnimationFrame(animate);
+  }
+
+  window.addEventListener('resize', () => { resize(); init(); }, { passive: true });
+  resize();
+  init();
+  animate();
+
+  // Pause when tab hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(animationId);
+    else animate();
   });
 })();
 </script>
